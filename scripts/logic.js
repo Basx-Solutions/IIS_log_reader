@@ -1,35 +1,58 @@
+//state
 let reqData = [];
 let csvLogs = [];
+let multiFileContent = [];
 
-const fileInput = document.getElementById("documentInput");
+//cache
 const parseBtn = document.getElementById("parseFileButton");
 const preview = document.getElementById("preview");
+const fileInput = document.getElementById("documentInput");
 const txtInput = document.getElementById("txtInput");
 const renderBtn = document.getElementById("renderBtn");
 const downloadBtn = document.getElementById("downloadBtn");
+const testButton = document.getElementById("testButton");
 
-parseBtn.addEventListener("click", handleParseString);
-renderBtn.addEventListener("click", handleRenderButtonClick);
-downloadBtn.addEventListener("click", handleDownload);
+//listeners
+parseBtn.addEventListener("click", handleParseClick);
+renderBtn.addEventListener("click", handleRenderClick);
+testButton.addEventListener("click", runTest);
 
-function handleParseClick() {
-  files = fileInput.files;
-
-  Object.keys(files).forEach(function (file) {
-    const previewHead = document.createElement("p");
-    previewHead.innerHTML = "file loaded";
-    const previewBody = document.createElement("preview");
-    previewBody.src = file;
-
-    preview.appendChild(previewHead);
+//handlers
+function handleRenderClick(evt) {
+  Object.keys(fileInput.files).forEach(function (file, i) {
+    extractTextContent(fileInput.files[i]);
   });
 }
+function handleParseClick(evt) {
+  var string = parseString(txtInput.value);
+  var csv = convertToCSV(string);
 
-function handleDownload(evt) {}
+  const file = new Blob([csv], { type: "csv" });
+  downloadBtn.href = URL.createObjectURL(file);
+  downloadBtn.download = "logs.txt";
+}
+function runTest(evt) {
+  console.log(multiFileContent);
+}
 
-function handleParseString(evt) {
-  const txt = txtInput.value;
-  var chunks = txt.split("#Software");
+//helpers
+async function extractTextContent(file) {
+  //extract file string and push to state
+  // push here because of async await issuee with file reader
+  var reader = new FileReader();
+  let string = "";
+  reader.readAsText(file, "UTF-8");
+
+  reader.onload = (readerEvent) => {
+    string = readerEvent.target.result;
+    const parsed = parseString(string);
+    const csv = convertToCSV(parsed);
+    multiFileContent.push(csv);
+  };
+}
+
+function parseString(string) {
+  var chunks = string.split("#Software");
   chunks.shift();
   var fields = chunks.map((chunk) =>
     chunk.split("#Date:")[1].split("#Fields:")
@@ -102,14 +125,7 @@ function handleParseString(evt) {
   });
 
   reqData = reqMaster;
-  csvLogs = convertToCSV(reqMaster);
-
-  console.log(csvLogs);
-  const file = new Blob([csvLogs], { type: "csv" });
-  downloadBtn.href = URL.createObjectURL(file);
-  downloadBtn.download = "logs.txt";
-
-  downloadBtn.click();
+  return reqData;
 }
 
 function convertToCSV(arr) {
@@ -120,4 +136,10 @@ function convertToCSV(arr) {
       return Object.values(it).toString();
     })
     .join("\n");
+}
+
+function mergeMultipleCSV() {
+  //remove keys, save on first
+  //stitch together
+  //set stitched as download
 }
