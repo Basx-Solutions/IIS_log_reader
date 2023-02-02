@@ -34,6 +34,7 @@ function handleParseClick(evt) {
 }
 function runTest(evt) {
   console.log(multiFileContent);
+  console.log(mergedCSVLog);
   mergeMultipleCSV(multiFileContent);
 
   const file = new Blob([mergedCSVLog], { type: "csv" });

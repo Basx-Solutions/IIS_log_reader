@@ -10,15 +10,25 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <input id="documentInput" type="file" accept=".log" multiple />
+    <section id="previewSection">
+      <a id="downloadBtn">Download</a>
+      <ol>
+        <li>Select files or paste in .log string content</li>
+        <li>process with associated buttons and ^ download</li>
+      </ol>
+    </section>
+    <section id="inputSection">
+      <section>
+        <input id="documentInput" type="file" accept=".log" multiple />
 
-    <input type="text" id="txtInput" />
-    <button id="parseFileButton">parse</button>
-
-    <div id="preview"></div>
-    <button id="renderBtn">render</button>
-    <a id="downloadBtn">Download</a>
-
-    <button id="testButton">Test</button>
+        <div id="preview"></div>
+        <button id="renderBtn">Extract File Content</button>
+        <button id="testButton">Concat CSV & Set Download</button>
+      </section>
+      <section>
+        <input type="text" id="txtInput" />
+        <button id="parseFileButton">parse</button>
+      </section>
+    </section>
   </body>
 </html>
