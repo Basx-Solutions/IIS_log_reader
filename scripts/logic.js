@@ -2,6 +2,7 @@
 let reqData = [];
 let csvLogs = [];
 let multiFileContent = [];
+let mergedCSVLog = "";
 
 //cache
 const parseBtn = document.getElementById("parseFileButton");
@@ -33,6 +34,11 @@ function handleParseClick(evt) {
 }
 function runTest(evt) {
   console.log(multiFileContent);
+  mergeMultipleCSV(multiFileContent);
+
+  const file = new Blob([mergedCSVLog], { type: "csv" });
+  downloadBtn.href = URL.createObjectURL(file);
+  downloadBtn.download = "logs.txt";
 }
 
 //helpers
@@ -140,6 +146,15 @@ function convertToCSV(arr) {
 
 function mergeMultipleCSV() {
   //remove keys, save on first
-  //stitch together
-  //set stitched as download
+  multiFileContent.forEach(function (csvLog, i) {
+    if (i > 0) {
+      console.log(csvLog.split("referer,status"));
+      multiFileContent.splice(i, 1, csvLog.split("referer,status")[1]);
+    }
+  });
+
+  //stitch together & set as new state
+  multiFileContent.forEach(function (csvLog) {
+    mergedCSVLog += csvLog;
+  });
 }
